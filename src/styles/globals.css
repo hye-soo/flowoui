@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* Tokens from the FlowOui Figma style guide (Foundations v1.1, 25 Oct 2026).
+   Names mirror the Figma variables: FlowOui / Primitives, Semantic · Light, Foundations. */
+:root {
+  --flowoui-color-navy: #13293d;
+  --flowoui-color-deep-blue: #006494;
+  --flowoui-color-ocean: #247ba0;
+  --flowoui-color-sky: #1b98e0;
+  --flowoui-color-mist: #e8f1f2;
+  --flowoui-color-white: #ffffff;
+}
+
+@theme {
+  --color-navy: var(--flowoui-color-navy);
+  --color-deep-blue: var(--flowoui-color-deep-blue);
+  --color-ocean: var(--flowoui-color-ocean);
+  --color-sky: var(--flowoui-color-sky);
+  --color-mist: var(--flowoui-color-mist);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Display serif for headlines; Inter stays the body/UI face per the Figma baseline */
+  --font-serif: "Newsreader", ui-serif, Georgia, serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+}
+
+html {
+  background: var(--flowoui-color-mist); /* bg/canvas */
+  color: var(--flowoui-color-navy); /* text/primary */
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Paper grain over the whole page: a faint, fixed noise layer that takes the flat-digital edge off */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Shared headline treatment: one serif voice across every section */
+.headline {
+  font-family: var(--font-serif);
+  font-weight: 380;
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* border/focus: deep blue ring with a 2px clear separation */
+:focus-visible {
+  outline: 2px solid var(--flowoui-color-deep-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* On navy and deep-blue surfaces the deep-blue ring disappears; white keeps it visible */
+.on-dark :focus-visible {
+  outline-color: var(--flowoui-color-white);
+}
+
+/* Small sentence-case label for a card or a phase marker; information, not decoration */
+.label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+
+/* Hero footage: settles in on first frame, dips to navy at the loop point */
+.hero-video {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: saturate(0.85) contrast(1.04);
+  transition:
+    opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 2.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-video.is-ready {
+  opacity: 1;
+  transform: none;
+}
+.hero-video.is-ready.is-dim {
+  opacity: 0;
+  transition-duration: 0.55s;
+}
+.hero-scrim {
+  background:
+    linear-gradient(180deg, rgb(19 41 61 / 0.55) 0%, rgb(19 41 61 / 0.05) 22%, rgb(19 41 61 / 0.1) 48%, rgb(19 41 61 / 0.7) 74%, rgb(19 41 61 / 0.94) 100%),
+    linear-gradient(90deg, rgb(19 41 61 / 0.35) 0%, transparent 55%);
+}
+
+/* Headline lines rise out of a mask, one after another */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em; /* keep descenders inside the mask */
+}
+.line {
+  display: block;
+  animation: line-up 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+@keyframes line-up {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+/* Hero copy entrance; content stays visible if motion is reduced */
+.rise {
+  animation: rise 0.9s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .line {
+    animation: none;
+  }
+  .hero-video {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
